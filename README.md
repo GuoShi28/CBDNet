@@ -18,9 +18,18 @@ level. To make the learned model applicable to real photographs, both synthetic 
 *  "Test_Realistic_Noise_Model.m" is the testing code for the realistic noise mode in our paper. And it's very convinent to utilize [AddNoiseMosai.m](https://github.com/GuoShi28/CBDNet/blob/master/utils/AddNoiseMosai.m) to train your own denoising model for real photographs.
 
 ## Realistic Noise Model
+Given a clean image `x`, the realistic noise model can be represented as:
+
 ![](http://latex.codecogs.com/gif.latex?\\textbf{y}=M^{-1}(M(f(\\textbf{L}+n(\\textbf{x})))))
 
 ![](http://latex.codecogs.com/gif.latex?n(\\textbf{x})=n_s(\\textbf{x})+n_c)
+
+Where `y` is the noisy image, `f(.)` is the CRF function which converts irradiance `L` to `x`. `M(.)` represents the function that convert sRGB image to Bayer image and `M^(-1)(.)` represents the demosaicing function.
+
+If considering denosing on compressed images, 
+
+![](http://latex.codecogs.com/gif.latex?\\textbf{y}=JPEG(M^{-1}(M(f(\\textbf{L}+n(\\textbf{x}))))))
+
 
 ## Requirements and Dependencies
 * Matlab 2015b
