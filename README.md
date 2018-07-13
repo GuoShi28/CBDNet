@@ -1,4 +1,4 @@
-# Toward Convolutional Blind Denoising of Real Photographs
+# [Toward Convolutional Blind Denoising of Real Photographs](https://arxiv.org/abs/1807.04686)
 
 ## Abstract
 Despite their success in Gaussian denoising, deep convolutional neural networks (CNNs) are still very limited on real noisy photographs, and may even perform worse than BM3D. In order to improve the robustness and practicability of deep denoising models, this paper presents a convolutional blind denoising network (CBDNet) by incorporating network architecture, asymmetric learning and noise modeling. Our CBDNet is comprised of a noise estimation subnetwork and a denoising subnetwork. Motivated by the asymmetric sensitivity of BM3D to noise estimation error, the asymmetric learning is presented on the noise 017 estimation subnetwork to suppress more on under-estimation of noise
@@ -21,6 +21,9 @@ Following the guided of [DND Online submission system](https://noise.visinf.tu-d
 ## CBDNet Models
 * "CBDNet.mat" is the testing model for DND dataset and NC12 dataset for not considering the JPEG compression.
 *  "CBDNet_JPEG.mat" is the testing model for Nam dataset and other noisy images with JPEG format.
+
+## Testing
+* "Test_Patches.m" is the testing code for small images or image patches. If the tesing image is too large (e.g., 5760*3840), we recommend to use "Test_fullImage.m"
 
 ## Requirements and Dependencies
 * Matlab 2015b
