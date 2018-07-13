@@ -18,7 +18,7 @@ level. To make the learned model applicable to real photographs, both synthetic 
 *  "Test_Realistic_Noise_Model.m" is the testing code for the realistic noise mode in our paper. And it's very convinent to utilize [AddNoiseMosai.m](https://github.com/GuoShi28/CBDNet/blob/master/utils/AddNoiseMosai.m) to train your own denoising model for real photographs.
 
 ## Realistic Noise Model
-<img src="http://latex.codecogs.com/gif.latex? \textbf{y} = M^{-1}" />
+![](http://latex.codecogs.com/gif.latex?\\frac{1}{1+sin(x)})
 
 
 ## Requirements and Dependencies
