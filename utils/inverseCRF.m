@@ -1,4 +1,6 @@
-load('E:\GuoShi\denoise\FFDNet\FFDNet_train\utilities\201_CRF_data.mat')
+%%% function: create inverse CRF lookup table for faster computation
+%%%If this code is helpful to you, please Cite: https://arxiv.org/abs/1807.04686
+load('201_CRF_data.mat')
 invI = zeros(201,1024,'single');
 invB = I;
 
