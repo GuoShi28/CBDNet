@@ -12,11 +12,6 @@ level. To make the learned model applicable to real photographs, both synthetic 
 * "CBDNet.mat" is the testing model for DND dataset and NC12 dataset for not considering the JPEG compression.
 *  "CBDNet_JPEG.mat" is the testing model for Nam dataset and other noisy images with JPEG format.
 
-## Testing
-* "Test_Patches.m" is the testing code for small images or image patches. If the tesing image is too large (e.g., 5760*3840), we recommend to use "Test_fullImage.m"
-*  "Test_fullImage.m" is the testing code for large images. 
-*  "Test_Realistic_Noise_Model.m" is the testing code for the realistic noise mode in our paper. And it's very convinent to utilize [AddNoiseMosai.m](https://github.com/GuoShi28/CBDNet/blob/master/utils/AddNoiseMosai.m) to train your own denoising model for real photographs.
-
 ## Realistic Noise Model
 Given a clean image `x`, the realistic noise model can be represented as:
 
@@ -30,11 +25,10 @@ If considering denosing on compressed images,
 
 ![](http://latex.codecogs.com/gif.latex?\\textbf{y}=JPEG(M^{-1}(M(f(\\textbf{L}+n(\\textbf{x}))))))
 
-
-## Requirements and Dependencies
-* Matlab 2015b
-* Cuda-8.0 & cuDNN v-5.1
-* [MatConvNet](http://www.vlfeat.org/matconvnet/).
+## Testing
+* "Test_Patches.m" is the testing code for small images or image patches. If the tesing image is too large (e.g., 5760*3840), we recommend to use "Test_fullImage.m"
+*  "Test_fullImage.m" is the testing code for large images. 
+*  "Test_Realistic_Noise_Model.m" is the testing code for the realistic noise mode in our paper. And it's very convinent to utilize [AddNoiseMosai.m](https://github.com/GuoShi28/CBDNet/blob/master/utils/AddNoiseMosai.m) to train your own denoising model for real photographs.
 
 ## Real Images Denoising Results
 ### DND dataset
@@ -45,6 +39,11 @@ Following the guided of [DND Online submission system](https://noise.visinf.tu-d
 ### Nam dataset
 
 ![Image of Nam](figs/Nam_results.png)
+
+## Requirements and Dependencies
+* Matlab 2015b
+* Cuda-8.0 & cuDNN v-5.1
+* [MatConvNet](http://www.vlfeat.org/matconvnet/).
 
 ## Citation
 on going
