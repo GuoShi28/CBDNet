@@ -24,7 +24,7 @@ Following the guided of [DND Online submission system](https://noise.visinf.tu-d
 
 ## Testing
 * "Test_Patches.m" is the testing code for small images or image patches. If the tesing image is too large (e.g., 5760*3840), we recommend to use "Test_fullImage.m"
-
+*  "Test_fullImage.m" is the testing code for large images. 
 ## Requirements and Dependencies
 * Matlab 2015b
 * Cuda-8.0 & cuDNN v-5.1
