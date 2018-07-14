@@ -46,6 +46,6 @@ Following the guided of [DND Online submission system](https://noise.visinf.tu-d
 * [MatConvNet](http://www.vlfeat.org/matconvnet/).
 
 ## Citation
-on going
+[https://arxiv.org/abs/1807.04686](https://arxiv.org/abs/1807.04686)
 
 
