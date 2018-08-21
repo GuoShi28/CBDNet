@@ -30,6 +30,10 @@ If considering denosing on compressed images,
 * "CBDNet.mat" is the testing model for DND dataset and NC12 dataset for not considering the JPEG compression.
 *  "CBDNet_JPEG.mat" is the testing model for Nam dataset and other noisy images with JPEG format.
 
+## Implement Perceptual Loss Using MatConvnet
+The perceptual loss is the MSE loss between the [Perceptual Layer](https://github.com/GuoShi28/CBDNet/tree/master/utils/Perceptual_Layer) outputs of results and labels.
+The pretrained vgg model, [fast-rcnn-vgg16-pascal07-dagnn](http://www.vlfeat.org/matconvnet/pretrained/) is needed. 
+
 ## Real Images Denoising Results
 ### DND dataset
 Following the guided of [DND Online submission system](https://noise.visinf.tu-darmstadt.de/).
