@@ -23,8 +23,8 @@ Img = im2single(imread('1.png'));
 % noise = AddNoiseMosai(Img,I_gl,B_gl,I_inv_gl,B_inv_gl);
 
 %%% model2: setting \sigma_s, \sigma_c, CRF and mosaic pattern
-sigma_s = 0.08; % recommend 0~0.16
-sigma_c = 0.03; % recommend 0~0.06
+sigma_s = [0.08 0.08 0.08]; % recommend 0~0.16
+sigma_c = [0.03 0.03 0.03]; % recommend 0~0.06
 CRF_index = 5;  % 1~201
 pattern = 1;    % 1: 'gbrg', 2: 'grbg', 3: 'bggr', 4: 'rggb', 5: no mosaic
 
