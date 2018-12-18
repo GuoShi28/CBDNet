@@ -52,4 +52,11 @@ Following the guided of [DND Online submission system](https://noise.visinf.tu-d
 ## Citation
 [https://arxiv.org/abs/1807.04686](https://arxiv.org/abs/1807.04686)
 
+------------------------------------------------------------------------------------------------------------------------------
 
+**Q&A:** Why CBDNet can not process some high-noisy photos captured by my own?
+
+A: The main reason is the JPEG compression. For uncompression images even with really high noise under low light condition, CBDNet can remove noise very effectively. Even though we consider JPEG compression on CBDNet, our CBDNet(JPEG) model can only handle jpeg images with normal noise level, e.g., Nam.   
+
+I capture some high-noisy images using DLSR camera. Images are stored in both *uncompressed* and *JPEG* format. The denoising results are shown below. 
+![](figs/results.png)
