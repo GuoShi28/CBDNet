@@ -11,7 +11,7 @@ level. To make the learned model applicable to real photographs, both synthetic 
 ## Realistic Noise Model
 Given a clean image `x`, the realistic noise model can be represented as:
 
-![](http://latex.codecogs.com/gif.latex?\\textbf{y}=M^{-1}(M(f(\\textbf{L}+n(\\textbf{x})))))
+![](http://latex.codecogs.com/gif.latex?\\textbf{y}=f(M^{-1}(M(\\textbf{L}+n(\\textbf{x})))))
 
 ![](http://latex.codecogs.com/gif.latex?n(\\textbf{x})=n_s(\\textbf{x})+n_c)
 
@@ -19,7 +19,7 @@ Where `y` is the noisy image, `f(.)` is the CRF function which converts irradian
 
 If considering denosing on compressed images, 
 
-![](http://latex.codecogs.com/gif.latex?\\textbf{y}=JPEG(M^{-1}(M(f(\\textbf{L}+n(\\textbf{x}))))))
+![](http://latex.codecogs.com/gif.latex?\\textbf{y}=JPEG(f(M^{-1}(M(\\textbf{L}+n(\\textbf{x}))))))
 
 ## Testing
 * "Test_Patches.m" is the testing code for small images or image patches. If the tesing image is too large (e.g., 5760*3840), we recommend to use "Test_fullImage.m"
