@@ -51,13 +51,14 @@ Following the guided of [DND Online submission system](https://noise.visinf.tu-d
 
 ## Citation
 arxiv: [https://arxiv.org/abs/1807.04686](https://arxiv.org/abs/1807.04686)
-
+```
 @article{Guo2019Cbdnet,
   title={Toward convolutional blind denoising of real photographs},
   author={Guo, Shi and Yan, Zifei and Zhang, Kai and Zuo, Wangmeng and Zhang, Lei},
   journal={2019 IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
   year={2019}
 }
+```
 
 ------------------------------------------------------------------------------------------------------------------------------
 
