@@ -13,15 +13,19 @@ level. To make the learned model applicable to real photographs, both synthetic 
 ## Realistic Noise Model
 Given a clean image `x`, the realistic noise model can be represented as:
 
-![](http://latex.codecogs.com/gif.latex?\\textbf{y}=f(M^{-1}(M(\\textbf{L}+n(\\textbf{x})))))
+![](http://latex.codecogs.com/gif.latex?\\textbf{y}=f(M^{-1}(\\textbf{L}+n(\\textbf{L}))))
 
-![](http://latex.codecogs.com/gif.latex?n(\\textbf{x})=n_s(\\textbf{x})+n_c)
+![](http://latex.codecogs.com/gif.latex?n(\\textbf{L})=n_s(\\textbf{L})+n_c)
 
-Where `y` is the noisy image, `f(.)` is the CRF function which converts irradiance `L` to `x`. `M(.)` represents the function that convert sRGB image to Bayer image and `M^(-1)(.)` represents the demosaicing function.
+Where `y` is the noisy image, `f(.)` is the CRF function and the irradiance `L`
+
+![](http://latex.codecogs.com/gif.latex?\\textbf{L} = \\textbf{M}f^{-1}(\\textbf{x}))
+
+, `M(.)` represents the function that convert sRGB image to Bayer image and `M^(-1)(.)` represents the demosaicing function.
 
 If considering denosing on compressed images, 
 
-![](http://latex.codecogs.com/gif.latex?\\textbf{y}=JPEG(f(M^{-1}(M(\\textbf{L}+n(\\textbf{x}))))))
+![](http://latex.codecogs.com/gif.latex?\\textbf{y}=JPEG(f(M^{-1}(\\textbf{L}+n(\\textbf{L})))))
 
 ## Testing
 * "Test_Patches.m" is the testing code for small images or image patches. If the tesing image is too large (e.g., 5760*3840), we recommend to use "Test_fullImage.m"
