@@ -17,11 +17,7 @@ Given a clean image `x`, the realistic noise model can be represented as:
 
 ![](http://latex.codecogs.com/gif.latex?n(\\textbf{L})=n_s(\\textbf{L})+n_c)
 
-Where `y` is the noisy image, `f(.)` is the CRF function and the irradiance `L`:
-
-![](http://latex.codecogs.com/gif.latex?\\textbf{L}=\\textbf{M}f^{-1}(\\textbf{L}))
-
-, `M(.)` represents the function that convert sRGB image to Bayer image and `M^(-1)(.)` represents the demosaicing function.
+Where `y` is the noisy image, `f(.)` is the CRF function and the irradiance `L`: ![](http://latex.codecogs.com/gif.latex?\\textbf{L}=\\textbf{M}f^{-1}(\\textbf{x})) , `M(.)` represents the function that convert sRGB image to Bayer image and `M^(-1)(.)` represents the demosaicing function.
 
 If considering denosing on compressed images, 
 
