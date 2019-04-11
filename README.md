@@ -1,8 +1,6 @@
 # Toward Convolutional Blind Denoising of Real Photographs
 
 ### Paper versions
-[arxiv version](https://arxiv.org/abs/1807.04686)
-
 [CVPR 2019 version](http://www4.comp.polyu.edu.hk/~cslzhang/paper/CVPR19-CBDNet.pdf)
 
 [CVPR 2019 supp](http://www4.comp.polyu.edu.hk/~cslzhang/paper/CVPR19-CBDNet-supp.pdf)
