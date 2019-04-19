@@ -57,7 +57,7 @@ There are two major difference between this version and original CBDNet paper.
 
 **Other Steps:** ISP process to transfer raw nosie image back to sRGB space
 
-The steps are the isp process and are the inverse steps of Step1 to Step4.
+The steps are the inverse steps of Step1 to Step4.
 
 For details, please refer to the code directly.
 
