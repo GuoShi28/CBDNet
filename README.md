@@ -1,12 +1,18 @@
 # Toward Convolutional Blind Denoising of Real Photographs
 
 ### Paper versions
-[CVPR 2019 version](http://www4.comp.polyu.edu.hk/~cslzhang/paper/CVPR19-CBDNet.pdf)
+[**CVPR 2019 version**](http://www4.comp.polyu.edu.hk/~cslzhang/paper/CVPR19-CBDNet.pdf)
 
-[CVPR 2019 supp](http://www4.comp.polyu.edu.hk/~cslzhang/paper/CVPR19-CBDNet-supp.pdf)
+[**CVPR 2019 supp**](http://www4.comp.polyu.edu.hk/~cslzhang/paper/CVPR19-CBDNet-supp.pdf)
 
 ### Add some ISP/inverse ISP operators (Python)
-[SomeISP_operator_python](https://github.com/GuoShi28/CBDNet/tree/master/SomeISP_operator_python)
+[**Python Code, includimng ISP operators implement, real-world sRGB/RAW noisy image generation and noise map generation**](https://github.com/GuoShi28/CBDNet/blob/master/SomeISP_operator_python/ISP_implement.py)
+
+[**Introduction and examples of the formal code**](https://github.com/GuoShi28/CBDNet/blob/master/SomeISP_operator_python/isp_implement.md)
+
+[**Some simple materials of ISP**](https://github.com/GuoShi28/CBDNet/blob/master/Other_material/some_introduction_material_of_ISP.md)
+
+### Add some matrials 
 
 ## 1. Abstract
 Despite their success in Gaussian denoising, deep convolutional neural networks (CNNs) are still very limited on real noisy photographs, and may even perform worse than BM3D. In order to improve the robustness and practicability of deep denoising models, this paper presents a convolutional blind denoising network (CBDNet) by incorporating network architecture, asymmetric learning and noise modeling. Our CBDNet is comprised of a noise estimation subnetwork and a denoising subnetwork. Motivated by the asymmetric sensitivity of BM3D to noise estimation error, the asymmetric learning is presented on the noise estimation subnetwork to suppress more on under-estimation of noise
