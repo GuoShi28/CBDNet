@@ -51,11 +51,11 @@ There are two major difference between this version and original CBDNet paper.
 
 2. The noise map definition change to a more strict form. 
 
-For sRGB denoising, the noise map is defined as 6-channel feature which represent the various of R,G,B and covariance of RG, GB, RB.
+   For sRGB denoising, the noise map is defined as 6-channel feature which represent the various of R,G,B and covariance of RG, GB, RB.
 
-For RAW denoising, the noise map is also defined as the various of the noise image, which is almost the same with original CBDNet paper.
+   For RAW denoising, the noise map is also defined as the various of the noise image, which is almost the same with original CBDNet paper.
 
-**Other Steps** ISP process to transfer raw nosie image back to sRGB space
+**Other Steps:** ISP process to transfer raw nosie image back to sRGB space
 
 The steps are the isp process and are the inverse steps of Step1 to Step4.
 
