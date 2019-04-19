@@ -3,7 +3,7 @@ Here we complete the noise generation process of CBDNet.
 
 The code is released for users to better reproduce real-world denoising works better using python.
 
-Hope this helps. If there are some questions or mistakes in my code, please feel free to contact me.
+**Hope this helps. If there are some questions or mistakes in my code, please feel free to contact me.**
 
 ## 2. Major process of CBDNet+ noise generation
 
