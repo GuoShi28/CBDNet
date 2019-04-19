@@ -1,6 +1,6 @@
 ## Some introduction material of in-camera processing pipeline (ISP)
 
-Since the isp process have a crucial role on real-world denoising problem, we tidy some introductions of ISP for researchers not familiar with this topic.
+Since the isp process a crucial role on real-world denoising problem, we tidy some introductions of ISP for researchers not familiar with this topic.
 
 To note that, these materials are simple introductions for researchers to understand this topic ,not the newest ISP research. 
 
