@@ -113,6 +113,23 @@ class ISP:
         if type(M_xyz2cam) is int:
             cam_index = np.random.random((1, 4))
             cam_index = cam_index / np.sum(cam_index)
+            M_xyz2cam = (self.xyz2cam_all[0, :] * cam_index[0, 0] + \
+                         self.xyz2cam_all[1, :] * cam_index[0, 1] + \
+                         self.xyz2cam_all[2, :] * cam_index[0, 2] + \
+                         self.xyz2cam_all[3, :] * cam_index[0, 3] \
+                         )
+            self.M_xyz2cam = M_xyz2cam
+
+        M_xyz2cam = np.reshape(M_xyz2cam, (3, 3))
+        M_xyz2cam = M_xyz2cam / np.tile(np.sum(M_xyz2cam, axis=1), [3, 1]).T
+        cam = self.apply_cmatrix(img, M_xyz2cam)
+        cam = np.clip(cam, 0, 1)
+        return cam
+
+    def CAM2XYZ(self, img, M_xyz2cam=0):
+        if type(M_xyz2cam) is int:
+            cam_index = np.random.random((1, 4))
+            cam_index = cam_index / np.sum(cam_index)
             M_xyz2cam = (self.xyz2cam_all[0, :] * cam_index[0, 0] +
                          self.xyz2cam_all[1, :] * cam_index[0, 1] +
                          self.xyz2cam_all[2, :] * cam_index[0, 2] +
@@ -120,9 +137,10 @@ class ISP:
                          )
         M_xyz2cam = np.reshape(M_xyz2cam, (3, 3))
         M_xyz2cam = M_xyz2cam / np.tile(np.sum(M_xyz2cam, axis=1), [3, 1]).T
-        cam = self.apply_cmatrix(img, M_xyz2cam)
-        cam = np.clip(cam, 0, 1)
-        return cam
+        M_cam2xyz = np.linalg.inv(M_xyz2cam)
+        xyz = self.apply_cmatrix(img, M_cam2xyz)
+        xyz = np.clip(xyz, 0, 1)
+        return xyz
 
     def apply_cmatrix(self, img, matrix):
         r = (matrix[0, 0] * img[:, :, 0] + matrix[0, 1] * img[:, :, 1]
@@ -165,6 +183,23 @@ class ISP:
         mosaic_img[1::2, 1::2] = rgb[1::2, 1::2, num[3]]
         return mosaic_img
 
+    def WB_Mask(self, img, pattern, fr_now, fb_now):
+        wb_mask = np.ones(img.shape)
+        if  pattern == 'RGGB':
+            wb_mask[0::2, 0::2] = fr_now
+            wb_mask[1::2, 1::2] = fb_now
+        elif  pattern == 'BGGR':
+            wb_mask[1::2, 1::2] = fr_now
+            wb_mask[0::2, 0::2] = fb_now
+        elif  pattern == 'GRBG':
+            wb_mask[0::2, 1::2] = fr_now
+            wb_mask[1::2, 0::2] = fb_now
+        elif  pattern == 'GBRG':
+            wb_mask[1::2, 0::2] = fr_now
+            wb_mask[0::2, 1::2] = fb_now
+        return wb_mask
+
+
     def find(self, str, ch):
         for i, ltr in enumerate(str):
             if ltr == ch:
@@ -174,26 +209,38 @@ class ISP:
         results = demosaicing_CFA_Bayer_Malvar2004(bayer, pattern)
         results = np.clip(results, 0, 1)
         return results
+    
+    def add_PG_noise(self, img, sigma_s='RAN', sigma_c='RAN'):
+        min_log = np.log([0.0001])
+        if sigma_s == 'RAN':
+            sigma_s = min_log + np.random.rand(1) * (np.log([0.16]) - min_log)
+            sigma_s = np.exp(sigma_s)
+            self.sigma_s = sigma_s
+        if sigma_c == 'RAN':
+            sigma_c = min_log + np.random.rand(1) * (np.log([0.06]) - min_log)
+            sigma_c = np.exp(sigma_c)
+            self.sigma_c = sigma_c
+        # add noise
+        # print('Adding Noise: sigma_s='+str(sigma_s*255)+' sigma_c='+str(sigma_c*255))
+        noisy_img = img + \
+            np.random.normal(0.0, 1.0, img.shape) * (sigma_s * img) + \
+            np.random.normal(0.0, 1.0, img.shape) * sigma_c
+        noisy_img = np.clip(noisy_img, 0, 1)
+        return noisy_img
 
-    def sRGB2Bayer_rand(self, img):
-        # transfer 2 rgb space
-        img_rgb = self.BGR2RGB(img)
-        # inverse tone mapping
+    def cbdnet_noise_generate_srgb(self, img):
+        # To node that opencv store image in BGR,
+        # When apply to color tranfer, BGR should be transfer to RGB
+        img_rgb = img
+        # -------- INVERSE ISP PROCESS -------------------
+        # Step 1 : inverse tone mapping
         icrf_index = random.randint(0, 200)
         img_L = self.ICRF_Map(img_rgb, index=icrf_index)
-        # RGB to XYZ
+        # Step 2 : from RGB to XYZ
         img_XYZ = self.RGB2XYZ(img_L)
-        # XYZ to CAM
-        img_Cam = self.XYZ2CAM(img_XYZ)
-        # White Balance
-        min_fc = 0.75
-        max_fc = 1
-        fc_now = random.uniform(min_fc, max_fc)
-        img_Cam[:, :, 0] = fc_now * img_Cam[:, :, 0]
-        fc_now = random.uniform(min_fc, max_fc)
-        img_Cam[:, :, 2] = fc_now * img_Cam[:, :, 2]
-
-        # transfer image domain from XYZ to mosaic image
+        # Step 3: from XYZ to Cam
+        img_Cam = self.XYZ2CAM(img_XYZ, M_xyz2cam=0)
+        # Step 4: Mosaic
         pattern_index = random.randint(0, 3)
         pattern = []
         if pattern_index == 0:
@@ -204,14 +251,139 @@ class ISP:
             pattern = 'GBRG'
         elif pattern_index == 3:
             pattern = 'BGGR'
+        self.pattern = pattern
+        img_mosaic = self.mosaic_bayer(img_Cam, pattern=pattern)
+        # Step 5: inverse White Balance
+        min_fc = 0.75
+        max_fc = 1
+        self.fr_now = random.uniform(min_fc, max_fc)
+        self.fb_now = random.uniform(min_fc, max_fc)
+        wb_mask = isp.WB_Mask(img_mosaic, pattern, self.fr_now, self.fb_now)
+        img_mosaic = img_mosaic * wb_mask
+        gt_img_mosaic = img_mosaic
 
-        img_mosaic = self.mosaic_bayer(img_Cam, pattern)
-        return img_mosaic
+        # -------- ADDING POISSON-GAUSSIAN NOISE ON RAW -
+        img_mosaic_noise = self.add_PG_noise(img_mosaic)
 
+        # -------- ISP PROCESS --------------------------
+        # Step 5 : White Balance
+        wb_mask = isp.WB_Mask(img_mosaic_noise, pattern, 1/self.fr_now, 1/self.fb_now)
+        img_mosaic_noise = img_mosaic_noise * wb_mask
+        img_mosaic_noise = np.clip(img_mosaic_noise, 0, 1)
+        img_mosaic_gt = gt_img_mosaic * wb_mask
+        img_mosaic_gt = np.clip(img_mosaic_gt, 0, 1)
+        # Step 4 : Demosaic
+        img_demosaic = self.Demosaic(img_mosaic_noise, pattern=self.pattern)
+        img_demosaic_gt = self.Demosaic(img_mosaic_gt, pattern=self.pattern)
+        # Step 3 : from Cam to XYZ
+        img_IXYZ = self.CAM2XYZ(img_demosaic, M_xyz2cam=self.M_xyz2cam)
+        img_IXYZ_gt = self.CAM2XYZ(img_demosaic_gt, M_xyz2cam=self.M_xyz2cam)
+        # Step 2 : frome XYZ to RGB
+        img_IL = self.XYZ2RGB(img_IXYZ)
+        img_IL_gt = self.XYZ2RGB(img_IXYZ_gt)
+        # Step 1 : tone mapping
+        img_Irgb = self.CRF_Map(img_IL, index=icrf_index)
+        img_Irgb_gt = self.CRF_Map(img_IL_gt, index=icrf_index)
+
+        return img_Irgb_gt, img_Irgb
+
+    def cbdnet_noise_generate_raw(self, img):
+        # To node that opencv store image in BGR,
+        # When apply to color tranfer, BGR should be transfer to RGB
+        img_rgb = img
+        # -------- INVERSE ISP PROCESS -------------------
+        # Step 1 : inverse tone mapping
+        icrf_index = random.randint(0, 200)
+        img_L = self.ICRF_Map(img_rgb, index=icrf_index)
+        # Step 2 : from RGB to XYZ
+        img_XYZ = self.RGB2XYZ(img_L)
+        # Step 3: from XYZ to Cam
+        img_Cam = self.XYZ2CAM(img_XYZ, M_xyz2cam=0)
+        # Step 4: Mosaic
+        pattern_index = random.randint(0, 3)
+        pattern = []
+        if pattern_index == 0:
+            pattern = 'GRBG'
+        elif pattern_index == 1:
+            pattern = 'RGGB'
+        elif pattern_index == 2:
+            pattern = 'GBRG'
+        elif pattern_index == 3:
+            pattern = 'BGGR'
+        self.pattern = pattern
+        img_mosaic = self.mosaic_bayer(img_Cam, pattern=pattern)
+        # Step 5: inverse White Balance
+        min_fc = 0.75
+        max_fc = 1
+        self.fr_now = random.uniform(min_fc, max_fc)
+        self.fb_now = random.uniform(min_fc, max_fc)
+        wb_mask = isp.WB_Mask(img_mosaic, pattern, self.fr_now, self.fb_now)
+        img_mosaic = img_mosaic * wb_mask
+
+        # -------- ADDING POISSON-GAUSSIAN NOISE ON RAW -
+        img_mosaic_noise = self.add_PG_noise(img_mosaic)
+        
+        return img_mosaic, img_mosaic_noise
+
+    def cal_noise_map_raw(self, noise, gt, patch_size=8):
+        all_noise = noise - gt
+        img_w = gt.shape[0]
+        img_h = gt.shape[1]
+        w_num = int(np.ceil(img_w/patch_size))
+        h_num = int(np.ceil(img_h/patch_size))
+        noise_map = np.zeros((img_w, img_h))
+        print('w_num='+str(w_num)+'h_num'+str(h_num))  
+        for w_index in range(w_num):
+            for h_index in range(h_num):
+                start_x = w_index * patch_size
+                end_x = start_x + patch_size - 1
+                if end_x > img_w-1:
+                    end_x = img_w - 1
+                start_y = h_index * patch_size
+                end_y = start_y + patch_size - 1
+                if end_y > img_h-1:
+                    end_y = img_h - 1
+                noise_patch = all_noise[start_x:end_x+1, start_y:end_y+1]
+                noise_patch_flat = noise_patch.flatten()
+                noise_var = np.var(noise_patch_flat)
+                noise_map[start_x:end_x+1, start_y:end_y+1] = noise_var
+        
+        return noise_map
+
+    def cal_noise_map_srgb(self, noise, gt, patch_size=8):
+        all_noise = noise - gt
+        img_w = gt.shape[0]
+        img_h = gt.shape[1]
+        w_num = int(np.ceil(img_w/patch_size))
+        h_num = int(np.ceil(img_h/patch_size))
+        noise_map = np.zeros((img_w, img_h, 6))  
+        for w_index in range(w_num):
+            for h_index in range(h_num):
+                start_x = w_index * patch_size
+                end_x = start_x + patch_size - 1
+                if end_x > img_w-1:
+                    end_x = img_w - 1
+                start_y = h_index * patch_size
+                end_y = start_y + patch_size - 1
+                if end_y > img_h-1:
+                    end_y = img_h - 1
+                noise_patch = all_noise[start_x:end_x+1, start_y:end_y+1, :]
+                noise_patch_r_flat = noise_patch[:,:,0].flatten() 
+                noise_patch_g_flat = noise_patch[:,:,1].flatten()
+                noise_patch_b_flat = noise_patch[:,:,2].flatten()
+                noise_patch_flat = np.vstack((noise_patch_r_flat, noise_patch_g_flat, noise_patch_b_flat))
+                noise_cov = np.cov(noise_patch_flat)
+                noise_map[start_x:end_x+1, start_y:end_y+1, 0] = noise_cov[0, 0] 
+                noise_map[start_x:end_x+1, start_y:end_y+1, 1] = noise_cov[1, 1]
+                noise_map[start_x:end_x+1, start_y:end_y+1, 2] = noise_cov[2, 2]
+                noise_map[start_x:end_x+1, start_y:end_y+1, 3] = noise_cov[0, 1]
+                noise_map[start_x:end_x+1, start_y:end_y+1, 4] = noise_cov[0, 2]
+                noise_map[start_x:end_x+1, start_y:end_y+1, 5] = noise_cov[1, 2]
+        
+        return noise_map
 
 
 if __name__ == '__main__':
-    print('===> testing ISP')
     isp = ISP()
     path = './figs/01_gt.png'
     # To node that opencv store image in BGR,
@@ -220,17 +392,76 @@ if __name__ == '__main__':
     np.array(img, dtype='uint8')
     img = img.astype('double') / 255.0
     img_rgb = isp.BGR2RGB(img)
+    '''
+    print('ISP test 1:')
+    # -------- INVERSE ISP PROCESS -------------------
+    # Step 1 : inverse tone mapping
     img_L = isp.ICRF_Map(img_rgb, index=10)
+    # Step 2 : from RGB to XYZ
     img_XYZ = isp.RGB2XYZ(img_L)
+    # Step 3: from XYZ to Cam
     xyz2cam = np.array([1.0234, -0.2969, -0.2266, -0.5625, 1.6328, -0.0469, -0.0703, 0.2188, 0.6406])
     img_Cam = isp.XYZ2CAM(img_XYZ, xyz2cam)
+    # Step 4: Mosaic
     img_mosaic = isp.mosaic_bayer(img_Cam)
-    img_demosaic = isp.Demosaic(img_mosaic)
+
+    # -------- ADDING POISSON-GAUSSIAN NOISE ON RAW -
+    # Mode1: set sigma_s and sigma_c
+    # img_mosaic_noise = isp.add_PG_noise(img_mosaic, sigma_s=0.01, sigma_c=0.02)
+    # Mode2: set random sigma_s and sigma_c
+    img_mosaic_noise = isp.add_PG_noise(img_mosaic)
+
+    # -------- ISP PROCESS --------------------------
+    # Step 4 : Demosaic
+    img_demosaic = isp.Demosaic(img_mosaic_noise)
+    # Step 3 : from Cam to XYZ
+    img_IXYZ = isp.CAM2XYZ(img_demosaic, xyz2cam)
+    # Step 2 : frome XYZ to RGB
+    img_IL = isp.XYZ2RGB(img_IXYZ)
+    # Step 1 : tone mapping
+    img_Irgb = isp.CRF_Map(img_IL, index=10)
+    '''
+  
+    '''
+    # Observe the images
     show_img = np.concatenate((img,
-                               isp.RGB2BGR(img_Cam),
+                               isp.RGB2BGR(img_Irgb),
                                cv2.merge([img_mosaic, img_mosaic, img_mosaic]),
                                isp.RGB2BGR(img_demosaic)
                                ), axis=1)
     cv2.namedWindow('Image', cv2.WINDOW_NORMAL)
     cv2.imshow('Image', show_img)
     cv2.waitKey(0)
+    '''
+
+    '''
+    print('ISP test 2:')
+    gt, noise = isp.cbdnet_noise_generate_srgb(img_rgb)
+
+    # Observe the images
+    show_img = np.concatenate((img,
+                               isp.RGB2BGR(gt),
+                               isp.RGB2BGR(noise)
+                               ), axis=1)
+    cv2.namedWindow('Image', cv2.WINDOW_NORMAL)
+    cv2.imshow('Image', show_img)
+    cv2.waitKey(0)
+    '''
+
+    print('ISP test 3:')
+    gt, noise = isp.cbdnet_noise_generate_raw(img_rgb)
+    noise_map = isp.cal_noise_map_raw(noise*255, gt*255, patch_size=8)
+    print(noise_map)
+    # Observe the images
+    show_img = np.concatenate((img,
+                               cv2.merge([noise_map/255, noise_map/255, noise_map/255]),
+                               cv2.merge([noise, noise, noise])
+                               ), axis=1)
+    cv2.namedWindow('Image', cv2.WINDOW_NORMAL)
+    cv2.imshow('Image', show_img)
+    cv2.waitKey(0)
+    
+    '''
+    img_Ibgr = isp.RGB2BGR(img_Irgb)
+    cv2.imwrite('./figs/01_inverse.png', img_Ibgr*255)
+    '''
