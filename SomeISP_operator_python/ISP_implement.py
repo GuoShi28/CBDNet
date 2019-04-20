@@ -258,7 +258,7 @@ class ISP:
         max_fc = 1
         self.fr_now = random.uniform(min_fc, max_fc)
         self.fb_now = random.uniform(min_fc, max_fc)
-        wb_mask = isp.WB_Mask(img_mosaic, pattern, self.fr_now, self.fb_now)
+        wb_mask = self.WB_Mask(img_mosaic, pattern, self.fr_now, self.fb_now)
         img_mosaic = img_mosaic * wb_mask
         gt_img_mosaic = img_mosaic
 
@@ -267,7 +267,7 @@ class ISP:
 
         # -------- ISP PROCESS --------------------------
         # Step 5 : White Balance
-        wb_mask = isp.WB_Mask(img_mosaic_noise, pattern, 1/self.fr_now, 1/self.fb_now)
+        wb_mask = self.WB_Mask(img_mosaic_noise, pattern, 1/self.fr_now, 1/self.fb_now)
         img_mosaic_noise = img_mosaic_noise * wb_mask
         img_mosaic_noise = np.clip(img_mosaic_noise, 0, 1)
         img_mosaic_gt = gt_img_mosaic * wb_mask
@@ -317,7 +317,7 @@ class ISP:
         max_fc = 1
         self.fr_now = random.uniform(min_fc, max_fc)
         self.fb_now = random.uniform(min_fc, max_fc)
-        wb_mask = isp.WB_Mask(img_mosaic, pattern, self.fr_now, self.fb_now)
+        wb_mask = self.WB_Mask(img_mosaic, pattern, self.fr_now, self.fb_now)
         img_mosaic = img_mosaic * wb_mask
 
         # -------- ADDING POISSON-GAUSSIAN NOISE ON RAW -
