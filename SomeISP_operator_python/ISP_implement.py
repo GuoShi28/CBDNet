@@ -325,63 +325,6 @@ class ISP:
         
         return img_mosaic, img_mosaic_noise
 
-    def cal_noise_map_raw(self, noise, gt, patch_size=8):
-        all_noise = noise - gt
-        img_w = gt.shape[0]
-        img_h = gt.shape[1]
-        w_num = int(np.ceil(img_w/patch_size))
-        h_num = int(np.ceil(img_h/patch_size))
-        noise_map = np.zeros((img_w, img_h))
-        print('w_num='+str(w_num)+'h_num'+str(h_num))  
-        for w_index in range(w_num):
-            for h_index in range(h_num):
-                start_x = w_index * patch_size
-                end_x = start_x + patch_size - 1
-                if end_x > img_w-1:
-                    end_x = img_w - 1
-                start_y = h_index * patch_size
-                end_y = start_y + patch_size - 1
-                if end_y > img_h-1:
-                    end_y = img_h - 1
-                noise_patch = all_noise[start_x:end_x+1, start_y:end_y+1]
-                noise_patch_flat = noise_patch.flatten()
-                noise_var = np.var(noise_patch_flat)
-                noise_map[start_x:end_x+1, start_y:end_y+1] = noise_var
-        
-        return noise_map
-
-    def cal_noise_map_srgb(self, noise, gt, patch_size=8):
-        all_noise = noise - gt
-        img_w = gt.shape[0]
-        img_h = gt.shape[1]
-        w_num = int(np.ceil(img_w/patch_size))
-        h_num = int(np.ceil(img_h/patch_size))
-        noise_map = np.zeros((img_w, img_h, 6))  
-        for w_index in range(w_num):
-            for h_index in range(h_num):
-                start_x = w_index * patch_size
-                end_x = start_x + patch_size - 1
-                if end_x > img_w-1:
-                    end_x = img_w - 1
-                start_y = h_index * patch_size
-                end_y = start_y + patch_size - 1
-                if end_y > img_h-1:
-                    end_y = img_h - 1
-                noise_patch = all_noise[start_x:end_x+1, start_y:end_y+1, :]
-                noise_patch_r_flat = noise_patch[:,:,0].flatten() 
-                noise_patch_g_flat = noise_patch[:,:,1].flatten()
-                noise_patch_b_flat = noise_patch[:,:,2].flatten()
-                noise_patch_flat = np.vstack((noise_patch_r_flat, noise_patch_g_flat, noise_patch_b_flat))
-                noise_cov = np.cov(noise_patch_flat)
-                noise_map[start_x:end_x+1, start_y:end_y+1, 0] = noise_cov[0, 0] 
-                noise_map[start_x:end_x+1, start_y:end_y+1, 1] = noise_cov[1, 1]
-                noise_map[start_x:end_x+1, start_y:end_y+1, 2] = noise_cov[2, 2]
-                noise_map[start_x:end_x+1, start_y:end_y+1, 3] = noise_cov[0, 1]
-                noise_map[start_x:end_x+1, start_y:end_y+1, 4] = noise_cov[0, 2]
-                noise_map[start_x:end_x+1, start_y:end_y+1, 5] = noise_cov[1, 2]
-        
-        return noise_map
-
 
 if __name__ == '__main__':
     isp = ISP()
@@ -450,7 +393,6 @@ if __name__ == '__main__':
 
     print('ISP test 3:')
     gt, noise = isp.cbdnet_noise_generate_raw(img_rgb)
-    noise_map = isp.cal_noise_map_raw(noise*255, gt*255, patch_size=8)
     print(noise_map)
     # Observe the images
     show_img = np.concatenate((img,
