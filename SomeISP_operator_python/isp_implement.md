@@ -45,15 +45,11 @@ In this step, the 3 channel image is transfer to bayer image.
 
 Different from original CBDNet paper, we also refer to [Unprocessing Images for Learned Raw Denoising](https://arxiv.org/pdf/1811.11127.pdf).
 
-There are two major difference between this version and original CBDNet paper.
+There are some major difference between this version and original CBDNet paper.
 
-1. The noise levels are uniformly distribut on log space. This process can let the network focus more on normal noise level. 
+The noise levels are uniformly distribut on log space. This process can let the network focus more on normal noise level. 
 
-2. The noise map definition change to a more strict form. 
-
-   For sRGB denoising, the noise map is defined as 6-channel feature which represent the various of R,G,B and covariance of RG, GB, RB.
-
-   For RAW denoising, the noise map is also defined as the various of the noise image, which is almost the same with original CBDNet paper.
+The experiment settings can refer to the CBDNet paper.
 
 **Other Steps:** ISP process to transfer raw nosie image back to sRGB space
 
@@ -82,7 +78,6 @@ img = img.astype('double') / 255.0
 img_rgb = isp.BGR2RGB(img)
 
 gt, noise = isp.cbdnet_noise_generate_srgb(img_rgb)
-noise_map = isp.cal_noise_map_srgb(noise*255, gt*255, patch_size=8)/255
 ```
 
 ### real-world raw noise image generation
@@ -98,5 +93,4 @@ img = img.astype('double') / 255.0
 img_rgb = isp.BGR2RGB(img)
 
 gt, noise = isp.cbdnet_noise_generate_raw(img_rgb)
-noise_map = isp.cal_noise_map_raw(noise*255, gt*255, patch_size=8)/255
 ```
