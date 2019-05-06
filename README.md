@@ -6,7 +6,7 @@
 [**CVPR 2019 supp**](http://www4.comp.polyu.edu.hk/~cslzhang/paper/CVPR19-CBDNet-supp.pdf)
 
 ### Python implement of ISP/inverse ISP operators and some materials
-[**Python Code, includimng ISP operators implement, real-world sRGB/RAW noisy image generation and noise map generation**](https://github.com/GuoShi28/CBDNet/blob/master/SomeISP_operator_python/ISP_implement.py)
+[**Python Code, includimng ISP operators implement, real-world sRGB/RAW noisy image generation and noise map generation**](https://github.com/GuoShi28/CBDNet/blob/master/SomeISP_operator_python/ISP_implement.py)(Not totally the same with Matlab Code)
 
 [**Introduction and examples of the formal code**](https://github.com/GuoShi28/CBDNet/blob/master/SomeISP_operator_python/isp_implement.md)
 
