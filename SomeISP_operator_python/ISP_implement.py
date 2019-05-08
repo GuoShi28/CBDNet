@@ -222,9 +222,14 @@ class ISP:
             self.sigma_c = sigma_c
         # add noise
         # print('Adding Noise: sigma_s='+str(sigma_s*255)+' sigma_c='+str(sigma_c*255))
+        sigma_total = np.sqrt(sigma_s * img + sigma_c)
+        '''
         noisy_img = img + \
             np.random.normal(0.0, 1.0, img.shape) * (sigma_s * img) + \
             np.random.normal(0.0, 1.0, img.shape) * sigma_c
+        '''
+        noisy_img = img +  \
+            sigma_total * np.random.randn(img.shape[0], img.shape[1])
         noisy_img = np.clip(noisy_img, 0, 1)
         return noisy_img
 
