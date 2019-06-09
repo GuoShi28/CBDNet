@@ -69,7 +69,7 @@ class ISP:
                             index = index - 1
                     temp_img[i] = invI_temp[index]
                     break
-        temp_img = np.reshape(temp_img, (h, w, c))
+        temp_img = np.reshape(temp_img, (w, h, c))
         return temp_img
 
     def CRF_Map(self, img, index=0):
@@ -98,7 +98,7 @@ class ISP:
                             index = index - 1
                     temp_img[i] = B_temp[index]
                     break
-        temp_img = np.reshape(temp_img, (h, w, c))
+        temp_img = np.reshape(temp_img, (w, h, c))
         return temp_img
 
     def RGB2XYZ(self, img):
