@@ -35,7 +35,7 @@ function [Img] = CRF_Map(Img,I,B)
               index = b;
               if index > 1
                   comp1 = tempB - temp;
-                  comp2 = temp - B(1,index-1);
+                  comp2 = temp - I(1,index-1);
                   if comp2 < comp1
                       index = index-1;
                   end
